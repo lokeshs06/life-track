@@ -35,6 +35,22 @@ All combined into one seamless and user-friendly health monitoring platform.
 ---
 
 ## **Requirements**
+
+## **Libraries required**
+```python
+
+pip install django 
+```
+```python
+pip install django-allauth
+```
+```python
+pip install PyJWT
+```
+```python
+pip install jwt 
+
+```
 ### **Operating System**
 - Windows / Ubuntu (64-bit recommended)
 
@@ -63,26 +79,66 @@ All combined into one seamless and user-friendly health monitoring platform.
 
 ## **System Architecture**
 ### **System Architecture Diagram**
-*(Insert architecture diagram image here)*
+![alt text](outputs/architecture.png)
 
+
+---
+
+---
+## **UML Diagrams**
+
+---
+![alt text](outputs/usecase-uml.png)
+
+---
+
+---
+
+![alt text](outputs/sequence-uml.png)
+
+---
+
+---
+
+![alt text](outputs/class-uml.png)
+
+---
 
 ---
 
 ## **Output**
 
-### **Output 1 – User Dashboard**
-*(Insert screenshot here)*  
+
+### **Output 1 – Progress overview**
+![alt text](outputs/progress-over.png)
 Displays daily activity overview, including steps, calories, and sleep patterns.
 
-### **Output 2 – Prediction & Recommendations**
-*(Insert screenshot here)*  
+### **Output 2 - Calorie intake & macros**
+
+![alt text](outputs/calorie-macros.png)
+Displays the calorie intake and macros distribution.
+
+
+### **Output 3 – Prediction & Recommendations**
+![alt text](outputs/prediction.png)
 Shows AI-based predictions for the next 7 days along with personalized suggestions.
+
+
+### **Output 4 - Goals & achieved targets**
+![alt text](outputs/goals.png)
+Shows the goals and achieved targets to keep and stay focused
+
+
+### **Output 5 - Personalized recommendations**
+![alt text](outputs/AI-insights.png)
+Shows and fetch the values from the macros and calories and suggest the recommendations based on the values
+
 
 ---
 
 ## **Prediction Accuracy**
-**Accuracy:** 92–95%  
-*Note: Accuracy may vary based on dataset quality and training iterations.*
+![alt text](outputs/overall_performance.png)
+
 
 ---
 
@@ -96,13 +152,12 @@ This project demonstrates the growing potential of AI in personal healthcare and
 
 ---
 
-## **Articles Published / References**
-1. J. Brown, L. Davis,  
-   *“Machine Learning Applications in Personal Health Monitoring”*,  
-   Journal of Digital Health, 2023.
+## **References**
+A Review of the Role of Artificial Intelligence in Healthcare
+     Ahmed Al Kuwaiti 1,*, Khalid Nazer 2,3, Abdullah Al-Reedy 4, Shaher Al-Shehri 5, Afnan Al-Muhanna 6,7, Arun Vijay Subbarayalu 8, Dhoha Al Muhanna 9, Fahad A Al-Muhanna 10,11
 
-2. S. Arora, M. Gupta,  
-   *“Improving Lifestyle Predictions Using Behavioral Analytics”*,  
-   International Journal of AI & Data Science, 2024.
+
+Artificial Intelligence and Machine Learning Technologies for Personalized Nutrition: A Review
+     by Dimitris Tsolakidis,Lazaros P. Gymnopoulos and Kosmas Dimitropoulos
 
 ---
