@@ -1,7 +1,7 @@
-# **LifeTrack – AI-Powered Health & Lifestyle Monitoring System**
+# **LifeTrack – AI-Powered Health & Lifestyle Monitoring Syste**
 
 ## **Title of the Project**
-**LifeTrack – Smart Health Monitoring and Prediction System**
+**LifeTrack – AI-Enhanced health monitoring system**
 
 ---
 
