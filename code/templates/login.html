@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full">
+        <div class="bg-white rounded-2xl shadow-2xl p-8">
+            <div class="text-center mb-8">
+                <i class="fas fa-heartbeat text-6xl text-indigo-600 mb-4"></i>
+                <h2 class="text-3xl font-extrabold text-gray-900">Welcome Back</h2>
+                <p class="mt-2 text-sm text-gray-600">Sign in to continue your health journey</p>
+            </div>
+
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+
+                <div>
+                    <label for="id_username" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-user mr-2"></i>Username or Email
+                    </label>
+                    <input type="text" name="username" id="id_username" required
+                        class="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                        placeholder="Enter your username or email">
+                </div>
+
+                <div>
+                    <label for="id_password" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-lock mr-2"></i>Password
+                    </label>
+                    <div class="relative">
+                        <input type="password" name="password" id="id_password" required
+                            class="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+                            placeholder="Enter your password">
+                        <button type="button"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                            onclick="togglePasswordVisibility('id_password', this)">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                {% if form.errors %}
+                <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                    <p class="text-sm">Invalid username/email or password. Please try again.</p>
+                </div>
+                {% endif %}
+
+                <div>
+                    <button type="submit"
+                        class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all transform hover:scale-105">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Sign In
+                    </button>
+                </div>
+            </form>
+
+            <div class="mt-6">
+                <div class="flex items-center justify-center">
+                    <span class="w-1/5 border-b border-gray-300"></span>
+                    <span class="mx-3 text-sm text-gray-500">or continue with</span>
+                    <span class="w-1/5 border-b border-gray-300"></span>
+                </div>
+
+                <div class="mt-4 flex justify-center">
+                    <!-- Typical django-allauth google login endpoint; replace if you use a different provider setup -->
+                    <a href="/accounts/google/login/"
+                        class="inline-flex items-center px-4 py-2 border rounded-lg shadow-sm bg-white hover:bg-gray-50 transition">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"
+                            class="w-5 h-5 mr-3">
+                        <span class="text-sm font-medium text-gray-700">Sign in with Google</span>
+                    </a>
+                </div>
+
+                <div class="mt-6 text-center space-y-3">
+                    <p class="text-sm text-gray-600">
+                        <a href="{% url 'custom_password_reset' %}"
+                            class="font-medium text-indigo-600 hover:text-indigo-500 transition">
+                            <i class="fas fa-key mr-1"></i>Forgot your password?
+                        </a>
+                    </p>
+                    <p class="text-sm text-gray-600">
+                        Don't have an account?
+                        <a href="{% url 'signup' %}"
+                            class="font-medium text-indigo-600 hover:text-indigo-500 transition">
+                            Sign up now
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

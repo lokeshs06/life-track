@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Health Logs{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-6">
+    <h2 class="text-2xl font-bold mb-4">Your Health Logs</h2>
+
+    {% if logs %}
+    <div class="overflow-x-auto bg-white shadow rounded-xl">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Date</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Calories</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Water (L)</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Steps</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Exercise</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Sleep (h)</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Mood</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Notes</th>
+                    <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+                {% for log in logs %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-4 py-2 text-sm text-gray-700">{{ log.date }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-700">{{ log.calories_intake }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-700">{{ log.water_intake }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-700">{{ log.steps }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-700">{{ log.exercise_type|default:"-" }} ({{ log.exercise_duration }} min)</td>
+                    <td class="px-4 py-2 text-sm text-gray-700">{{ log.sleep_hours }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-700 capitalize">{{ log.mood }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-700">{{ log.notes|default:"-" }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-700">
+                        <a href="{% url 'edit_health_log' log.id %}" class="text-indigo-600 hover:text-indigo-800 mr-3">Edit</a>
+                        <form method="post" action="{% url 'delete_health_log' log.id %}" class="inline" onsubmit="return confirm('Delete this log?');">
+                            {% csrf_token %}
+                            <button type="submit" class="text-red-600 hover:text-red-800">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="text-gray-600">No health logs found. <a href="{% url 'add_health_log' %}" class="text-indigo-600 underline">Add your first log</a>.</p>
+    {% endif %}
+</div>
+{% endblock %}

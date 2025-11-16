@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Health Tracker{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- base JS is loaded from static files (see bottom of page) -->
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    
+    {% if user.is_authenticated %}
+    <!-- Navigation -->
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="flex items-center">
+                            <i class="fas fa-heartbeat text-3xl text-indigo-600"></i>
+                            <span class="ml-2 text-xl font-bold text-gray-800">LifeTrack</span>
+                        </div>
+                    </div>
+                    <div id="nav-links" class="hidden sm:ml-6 sm:flex sm:space-x-8">
+
+                        {% comment %} Dashboard link - active when url_name == 'dashboard' {% endcomment %}
+                        <a href="{% url 'dashboard' %}" class="nav-link inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium {% if request.resolver_match and request.resolver_match.url_name == 'dashboard' %}border-indigo-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %}">
+                            <i class="fas fa-chart-line mr-2"></i>Dashboard
+                        </a>
+
+                        {% comment %} Add Log link {% endcomment %}
+                        <a href="{% url 'add_health_log' %}" class="nav-link inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium {% if request.resolver_match and request.resolver_match.url_name == 'add_health_log' %}border-indigo-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %}">
+                            <i class="fas fa-plus-circle mr-2"></i>Add Log
+                        </a>
+
+                        {% comment %} View Logs link {% endcomment %}
+                        <a href="{% url 'view_logs' %}" class="nav-link inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium {% if request.resolver_match and request.resolver_match.url_name == 'view_logs' %}border-indigo-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %}">
+                            <i class="fas fa-list mr-2"></i>View Logs
+                        </a>
+
+                        {% comment %} Manage Goals link {% endcomment %}
+                        <a href="{% url 'manage_goals' %}" class="nav-link inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium {% if request.resolver_match and request.resolver_match.url_name == 'manage_goals' %}border-indigo-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %}">
+                            <i class="fas fa-bullseye mr-2"></i>Goals
+                        </a>
+
+                        {% comment %} Recommendations link {% endcomment %}
+                        <a href="{% url 'view_recommendations' %}" class="nav-link inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium {% if request.resolver_match and request.resolver_match.url_name == 'view_recommendations' %}border-indigo-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %}">
+                            <i class="fas fa-robot mr-2"></i>AI Insights
+                        </a>
+
+                        {% comment %} Nutrition Tracking link {% endcomment %}
+                        <a href="{% url 'nutrition_tracking' %}" class="nav-link inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium {% if request.resolver_match and request.resolver_match.url_name == 'nutrition_tracking' %}border-indigo-500 text-gray-900{% else %}border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700{% endif %}">
+                            <i class="fas fa-utensils mr-2"></i>Nutrition
+                        </a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-gray-700 mr-4">Welcome, <strong>{{ user.username }}</strong></span>
+                    <a href="{% url 'logout' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+    
+    <!-- Messages -->
+    {% if messages %}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        {% for message in messages %}
+        <div class="flash-message {% if message.tags == 'success' %}bg-green-100 border-green-400 text-green-700{% elif message.tags == 'error' %}bg-red-100 border-red-400 text-red-700{% else %}bg-blue-100 border-blue-400 text-blue-700{% endif %} border px-4 py-3 rounded relative mb-4" role="alert">
+            <span class="block sm:inline">{{ message }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-white mt-12 py-6 shadow-inner">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-600">
+            <p>&copy; 2025 LifeTrack. Your health, your data, your privacy.</p>
+        </div>
+    </footer>
+    
+    <script src="{% static 'lifetrack/js/base.js' %}"></script>
+    <script>
+        // Toggle visibility for password inputs. Called from login/signup templates.
+        function togglePasswordVisibility(inputId, btn) {
+            try {
+                var input = document.getElementById(inputId);
+                if (!input) return;
+                var icon = btn.querySelector('i');
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    if (icon) {
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    }
+                } else {
+                    input.type = 'password';
+                    if (icon) {
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                }
+                // keep focus on the input after toggling
+                input.focus();
+            } catch (e) {
+                // fail silently so missing JS doesn't break pages
+                console.error('togglePasswordVisibility error', e);
+            }
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

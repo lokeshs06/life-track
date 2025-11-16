@@ -1,0 +1,739 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="space-y-10">
+    <!-- Welcome Header -->
+    <div class="bg-white rounded-2xl shadow-xl p-8 flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                Welcome back, {{ user.username }} 👋
+            </h1>
+            <p class="text-gray-600">Here's a quick overview of your health today.</p>
+        </div>
+        <div>
+            <a href="{% url 'edit_profile' %}"
+                class="inline-flex items-center bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-lg text-sm font-medium transition transform hover:scale-105 shadow">
+                <i class="fas fa-edit mr-2"></i>Edit Profile
+            </a>
+            <a href="{% url 'add_health_log' %}"
+                class="inline-flex items-center bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-lg text-sm font-medium transition transform hover:scale-105 shadow">
+                <i class="fas fa-plus-circle mr-2"></i>Add New Log
+            </a>
+        </div>
+    </div>
+    {% if top_recommendations %}
+    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% for rec in top_recommendations %}
+        <div class="bg-white p-4 rounded-lg border border-gray-100 shadow-sm">
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <i class="fas fa-lightbulb text-2xl text-indigo-600"></i>
+                </div>
+                <div class="ml-3">
+                    <h4 class="text-sm font-semibold text-gray-800">{{ rec.title }}</h4>
+                    <p class="text-sm text-gray-600 mt-1">{{ rec.message }}</p>
+                    <p class="text-xs text-gray-400 mt-2">Suggested: {{ rec.created_at|date:"M d" }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Health Stats Overview -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
+            <i class="fas fa-weight text-2xl text-indigo-600 mb-3"></i>
+            <h3 class="text-gray-800 font-semibold">Weight</h3>
+            <p class="text-2xl font-bold text-gray-900">{{ profile.weight }} kg</p>
+        </div>
+
+        <div class="bg-pink-50 p-6 rounded-2xl border border-pink-100">
+            <i class="fas fa-ruler-vertical text-2xl text-pink-600 mb-3"></i>
+            <h3 class="text-gray-800 font-semibold">Height</h3>
+            <p class="text-2xl font-bold text-gray-900">{{ profile.height }} cm</p>
+        </div>
+
+        <div class="bg-green-50 p-6 rounded-2xl border border-green-100">
+            <i class="fas fa-heart text-2xl text-green-600 mb-3"></i>
+            <h3 class="text-gray-800 font-semibold">BMI</h3>
+            <p class="text-2xl font-bold text-gray-900">{{ profile.bmi|floatformat:1 }}</p>
+        </div>
+
+        <div class="bg-yellow-50 p-6 rounded-2xl border border-yellow-100">
+            <i class="fas fa-running text-2xl text-yellow-600 mb-3"></i>
+            <h3 class="text-gray-800 font-semibold">Activity Level</h3>
+            <p class="text-lg font-medium text-gray-900 capitalize">{{ profile.activity_level }}</p>
+        </div>
+    </div>
+
+    <!-- Analytics Dashboard -->
+    <div class="space-y-6">
+        <!-- Main Progress Overview -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-chart-line text-indigo-600 mr-2"></i>Progress Overview
+            </h2>
+            <canvas id="progressChart" height="120"></canvas>
+        </div>
+
+        <!-- Nutrition Analytics Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Calorie Intake Trend -->
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-utensils text-green-600 mr-2"></i>Calorie Intake Trend
+                    </h3>
+                    <a href="{% url 'nutrition_tracking' %}"
+                        class="text-green-600 hover:text-green-800 text-sm flex items-center">
+                        View Details <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                <div class="h-[300px]" id="caloriesChartContainer">
+                    <canvas id="caloriesChart"></canvas>
+                </div>
+                {% if weekly_nutrition_stats.total_calories and weekly_nutrition_stats.total_calories > 0 %}
+                <div class="mt-4 grid grid-cols-2 gap-4">
+                    <div class="bg-green-50 p-3 rounded-lg text-center">
+                        <p class="text-sm text-gray-600 mb-1">Daily Average</p>
+                        <p class="text-xl font-bold text-green-600">{{ daily_averages.calories|default:0|floatformat:0 }}</p>
+                    </div>
+                    <div class="bg-indigo-50 p-3 rounded-lg text-center">
+                        <p class="text-sm text-gray-600 mb-1">Weekly Total</p>
+                        <p class="text-xl font-bold text-indigo-600">{{ weekly_nutrition_stats.total_calories|default:0|floatformat:0 }}</p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="mt-4 text-center text-gray-500">
+                    <p>No nutrition data available for the past week</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Macros Distribution -->
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                        <i class="fas fa-chart-pie text-blue-600 mr-2"></i>Macros Distribution
+                    </h3>
+                    <a href="{% url 'nutrition_tracking' %}"
+                        class="text-blue-600 hover:text-blue-800 text-sm flex items-center">
+                        View Details <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+                <div class="h-[300px]" id="macrosMainChartContainer">
+                    <canvas id="macrosMainChart"></canvas>
+                </div>
+                {% if macros_distribution %}
+                <div class="mt-4 grid grid-cols-3 gap-4">
+                    <div class="bg-blue-50 p-3 rounded-lg text-center">
+                        <p class="text-xs text-gray-600 mb-1">Daily Protein</p>
+                        <p class="text-lg font-bold text-blue-600">{{ daily_averages.protein|floatformat:1 }}g</p>
+                    </div>
+                    <div class="bg-green-50 p-3 rounded-lg text-center">
+                        <p class="text-xs text-gray-600 mb-1">Daily Carbs</p>
+                        <p class="text-lg font-bold text-green-600">{{ daily_averages.carbs|floatformat:1 }}g</p>
+                    </div>
+                    <div class="bg-orange-50 p-3 rounded-lg text-center">
+                        <p class="text-xs text-gray-600 mb-1">Daily Fat</p>
+                        <p class="text-lg font-bold text-orange-600">{{ daily_averages.fat|floatformat:1 }}g</p>
+                    </div>
+                    <div class="bg-emerald-50 p-3 rounded-lg text-center">
+                        <p class="text-xs text-gray-600 mb-1">Daily Fiber</p>
+                        <p class="text-lg font-bold text-emerald-600">{{ daily_averages.fiber|floatformat:1 }}g</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+
+
+        <!-- Goals Progress Section -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-gray-800 flex items-center">
+                    <i class="fas fa-bullseye text-indigo-600 mr-2"></i>Goals Progress
+                </h2>
+                <a href="{% url 'manage_goals' %}"
+                    class="text-indigo-600 hover:text-indigo-800 text-sm flex items-center">
+                    Manage Goals <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            {% if active_goals %}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {% for goal in active_goals %}
+                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <div class="flex items-center mb-2">
+                        {% if goal.goal_type == 'weight' %}
+                        <i class="fas fa-weight text-blue-500 mr-2"></i>
+                        {% elif goal.goal_type == 'steps' %}
+                        <i class="fas fa-walking text-green-500 mr-2"></i>
+                        {% elif goal.goal_type == 'exercise' %}
+                        <i class="fas fa-dumbbell text-orange-500 mr-2"></i>
+                        {% elif goal.goal_type == 'sleep' %}
+                        <i class="fas fa-bed text-purple-500 mr-2"></i>
+                        {% else %}
+                        <i class="fas fa-tint text-cyan-500 mr-2"></i>
+                        {% endif %}
+                        <span class="font-medium text-gray-900">{{ goal.get_goal_type_display }}</span>
+                        <span
+                            class="ml-auto text-sm font-bold {% if goal.progress_percentage >= 100 %}text-green-600{% else %}text-indigo-600{% endif %}">
+                            {{ goal.progress_percentage }}%
+                        </span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-3 mb-2">
+                        <div class="{% if goal.is_achieved %}bg-green-500{% else %}bg-indigo-600{% endif %} h-3 rounded-full transition-all duration-500"
+                            style="width: {{ goal.progress_percentage }}%"></div>
+                    </div>
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <span>Current: {{ goal.current_value }}</span>
+                        <span class="text-indigo-600 font-medium">Target: {{ goal.target_value }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-gray-600 text-center py-4">No active goals. Set some goals to track your progress!</p>
+            {% endif %}
+        </div>
+
+        <!-- Detailed Metrics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Sleep Tracking -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-moon text-purple-600 mr-2"></i>Sleep Pattern
+                </h3>
+                <div class="h-48">
+                    <canvas id="sleepChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Water Intake -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-tint text-cyan-600 mr-2"></i>Water Intake
+                </h3>
+                <div class="h-48">
+                    <canvas id="waterChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Macronutrients Detail -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-chart-pie text-orange-600 mr-2"></i>Macros Detail
+                </h3>
+                <div class="h-48" id="macrosDetailChartContainer">
+                    <canvas id="macrosDetailChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        <a href="{% url 'add_health_log' %}"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white p-6 rounded-2xl text-center transition transform hover:scale-105 shadow">
+            <i class="fas fa-plus-circle text-3xl mb-2"></i>
+            <h4 class="font-semibold">Add Health Log</h4>
+        </a>
+        <a href="{% url 'view_logs' %}"
+            class="bg-green-600 hover:bg-green-700 text-white p-6 rounded-2xl text-center transition transform hover:scale-105 shadow">
+            <i class="fas fa-list text-3xl mb-2"></i>
+            <h4 class="font-semibold">View Logs</h4>
+        </a>
+        <a href="{% url 'manage_goals' %}"
+            class="bg-yellow-500 hover:bg-yellow-600 text-white p-6 rounded-2xl text-center transition transform hover:scale-105 shadow">
+            <i class="fas fa-bullseye text-3xl mb-2"></i>
+            <h4 class="font-semibold">Manage Goals</h4>
+        </a>
+        <a href="{% url 'view_recommendations' %}"
+            class="bg-pink-500 hover:bg-pink-600 text-white p-6 rounded-2xl text-center transition transform hover:scale-105 shadow">
+            <i class="fas fa-robot text-3xl mb-2"></i>
+            <h4 class="font-semibold">AI Insights</h4>
+        </a>
+    </div>
+
+    <!-- Predictions Panel -->
+    <div class="bg-white rounded-2xl shadow-lg p-8">
+        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-chart-pie text-indigo-600 mr-2"></i>Predictions (next 7 days)
+        </h2>
+            {% if wb_predictions %}
+            <div class="mb-6">
+                <h4 class="text-sm font-semibold text-gray-700 mb-2">Weight & BMI Forecast</h4>
+                <div class="h-52">
+                    <canvas id="wbPredChart"></canvas>
+                </div>
+            </div>
+            {% endif %}
+            {% if wb_suggestions %}
+            <div class="mt-4 grid grid-cols-1 gap-2">
+                {% for tip in wb_suggestions %}
+                <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+                    <p class="text-sm text-gray-800">{{ tip }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% if predictions or wb_predictions %}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {% for key, pred in predictions.items %}
+            <div class="border rounded-lg p-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-sm font-semibold text-gray-800">{{ pred.label }}</h3>
+                    <span class="text-xs text-gray-500 capitalize">{{ pred.trend }}</span>
+                </div>
+                <div class="mt-3">
+                    <ul class="text-sm text-gray-700 space-y-1">
+                        {% for d,v in pred.pairs %}
+                        <li class="flex justify-between"><span>{{ d }}</span><span class="font-semibold">{{ v }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-gray-600">No predictions available yet. Log more data to enable forecasting.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Chart.js Script - Consolidated and Fixed -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // ==================== PROGRESS CHART ====================
+    (function() {
+        try {
+            const progressCtx = document.getElementById('progressChart')?.getContext('2d');
+            if (!progressCtx) {
+                console.error('Progress chart context not found');
+                return;
+            }
+
+            const chartData = {{ chart_data|safe }} || {};
+            const series = chartData.series || [];
+            let labels = chartData.dates || [];
+
+            // If there are predicted series with their own dates, extend labels
+            const extraDates = new Set();
+            series.forEach(s => {
+                if (s.dates) {
+                    s.dates.forEach(d => { if (!labels.includes(d)) extraDates.add(d); });
+                }
+            });
+            if (extraDates.size > 0) {
+                labels = labels.concat(Array.from(extraDates));
+            }
+
+            // Prepare datasets
+            const datasets = series.map(s => {
+                const padded = [];
+                for (let i = 0; i < labels.length; i++) {
+                    padded.push(s.data[i] !== undefined ? s.data[i] : null);
+                }
+
+                const ds = {
+                    label: s.label,
+                    data: padded,
+                    borderColor: s.borderColor || '#4f46e5',
+                    backgroundColor: s.backgroundColor || 'rgba(79,70,229,0.08)',
+                    tension: 0.25,
+                    fill: !!s.fill
+                };
+                if (s.dashed) {
+                    ds.borderDash = [6, 6];
+                    ds.pointRadius = 3;
+                    ds.borderWidth = 2;
+                    ds.fill = false;
+                }
+                return ds;
+            });
+
+            new Chart(progressCtx, {
+                type: 'line',
+                data: { labels: labels, datasets: datasets },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: true, position: 'top' } },
+                    scales: {
+                        y: { beginAtZero: true },
+                        x: { title: { display: true, text: 'Date' } }
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Error initializing progress chart:', error);
+        }
+    })();
+
+    // ==================== CALORIE INTAKE CHART ====================
+    (function () {
+        const caloriesCanvas = document.getElementById('caloriesChart');
+        const caloriesContainer = document.getElementById('caloriesChartContainer');
+
+        // Get data from backend - using the SAME variables as nutrition_tracking.html
+        const caloriesDataPayload = {{ calories_data_json|safe }} || [];
+        const caloriesLabels = {{ dates_json|safe }} || [];
+
+    // Check if we have data
+    if (!caloriesLabels.length || !caloriesDataPayload.length) {
+        // Show empty state message
+        caloriesContainer.innerHTML = '<div class="flex items-center justify-center h-full"><p class="text-gray-500 text-center">No nutrition data for the past week.<br>Add entries to see your calorie trend.</p></div>';
+    } else {
+        // Render the chart
+        const caloriesCtx = caloriesCanvas.getContext('2d');
+        new Chart(caloriesCtx, {
+            type: 'line',
+            data: {
+                labels: caloriesLabels,
+                datasets: [{
+                    label: 'Calories',
+                    data: caloriesDataPayload,
+                    borderColor: '#10B981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#10B981'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return context.parsed.y + ' calories';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                        ticks: {
+                            callback: function (value) { return value + ' cal'; }
+                        }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+    }
+    }) ();
+
+    // ==================== MACROS MAIN CHART ====================
+    (function () {
+        const macrosCanvas = document.getElementById('macrosMainChart');
+        const macrosContainer = document.getElementById('macrosMainChartContainer');
+
+        // Get data from backend - using the SAME variables as nutrition_tracking.html
+    const macrosPayload = {{ macros_distribution_json|safe }} || [0, 0, 0, 0];
+    const totalMacros = (macrosPayload[0] || 0) + (macrosPayload[1] || 0) + (macrosPayload[2] || 0) + (macrosPayload[3] || 0);
+
+    // Check if we have data
+    if (!totalMacros) {
+        // Show empty state message
+        macrosContainer.innerHTML = '<div class="flex items-center justify-center h-full"><p class="text-gray-500 text-center">No macro data available.<br>Add nutrition entries to see distribution.</p></div>';
+    } else {
+        // Render the chart
+        const macrosCtx = macrosCanvas.getContext('2d');
+        new Chart(macrosCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Protein', 'Carbs', 'Fat', 'Fiber'],
+                datasets: [{
+                    data: macrosPayload,
+                    backgroundColor: [
+                        'rgba(234, 246, 59, 1)',
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(249, 115, 22, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(234, 246, 59, 1)',
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(16, 185, 129, 1)',
+                        'rgba(249, 115, 22, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: { size: 12 },
+                            padding: 20,
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                const value = context.raw || 0;
+                                const percent = totalMacros ? Math.round((value / totalMacros) * 100) : 0;
+                                return context.label + ': ' + value + 'g (' + percent + '%)';
+                            }
+                        }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+    }
+    }) ();
+
+    // ==================== SLEEP CHART ====================
+    (function() {
+        try {
+            const sleepCtx = document.getElementById('sleepChart')?.getContext('2d');
+            if (!sleepCtx) {
+                console.error('Sleep chart context not found');
+                return;
+            }
+
+            new Chart(sleepCtx, {
+                type: 'line',
+                data: {
+                    labels: {{ chart_dates|safe }} || [],
+                    datasets: [{
+                        label: 'Sleep Hours',
+                        data: {{ sleep_data|safe }} || [],
+                        borderColor: 'rgb(139, 92, 246)',
+                        backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 3,
+                        pointBackgroundColor: 'rgb(139, 92, 246)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + ' hours';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: 10,
+                            grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                            ticks: {
+                                callback: function(value) { return value + 'h'; }
+                            }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Error initializing sleep chart:', error);
+        }
+    })();
+
+    // ==================== WATER CHART ====================
+    (function() {
+        try {
+            const waterCtx = document.getElementById('waterChart')?.getContext('2d');
+            if (!waterCtx) {
+                console.error('Water chart context not found');
+                return;
+            }
+
+            new Chart(waterCtx, {
+                type: 'bar',
+                data: {
+                    labels: {{ chart_dates|safe }} || [],
+                    datasets: [{
+                        label: 'Water Intake (L)',
+                        data: {{ water_data|safe }} || [],
+                        backgroundColor: 'rgba(6, 182, 212, 0.7)',
+                        borderColor: 'rgb(6, 182, 212)',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + ' liters';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                            ticks: {
+                                callback: function(value) { return value + 'L'; }
+                            }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Error initializing water chart:', error);
+        }
+    })();
+
+    // ==================== MACROS DETAIL CHART ====================
+    (function () {
+        const macrosDetailCanvas = document.getElementById('macrosDetailChart');
+        const macrosDetailContainer = document.getElementById('macrosDetailChartContainer');
+
+        // Using same data as main macros chart
+    const macrosPayload = {{ macros_distribution_json|safe }} || [0, 0, 0, 0];
+    const totalMacros = (macrosPayload[0] || 0) + (macrosPayload[1] || 0) + (macrosPayload[2] || 0) + (macrosPayload[3] || 0);
+
+        if (!totalMacros) {
+            macrosDetailContainer.innerHTML = '<div class="flex items-center justify-center h-full"><p class="text-gray-500 text-center text-sm">No macro data available</p></div>';
+        } else {
+            const macrosDetailCtx = macrosDetailCanvas.getContext('2d');
+            new Chart(macrosDetailCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Protein', 'Carbs', 'Fat', 'Fiber'],
+                    datasets: [{
+                        data: macrosPayload,
+                        backgroundColor: [
+                            'rgba(234, 246, 59, 1)',
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(249, 115, 22, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(234, 246, 59, 1)',
+                            'rgba(59, 130, 246, 1)',
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(249, 115, 22, 1)'
+                        ],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { size: 11 },
+                                padding: 12,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw || 0;
+                                    const percent = totalMacros ? Math.round((value / totalMacros) * 100) : 0;
+                                    return context.label + ': ' + value + 'g (' + percent + '%)';
+                                }
+                            }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+        }
+    })();
+
+    // Debug logs (remove in production)
+    console.log('=== DASHBOARD CHART DEBUG ===');
+    console.log('Chart Data:', {{ chart_data|safe }});
+    console.log('Chart Dates:', {{ chart_dates|safe }});
+    console.log('Sleep Data:', {{ sleep_data|safe }});
+    console.log('Water Data:', {{ water_data|safe }});
+    console.log('Calories Data:', {{ calories_data_json|safe }});
+    console.log('Dates:', {{ dates_json|safe }});
+    console.log('Macros Distribution:', {{ macros_distribution_json|safe }});
+    console.log('Weekly Nutrition Stats:', {{ weekly_nutrition_stats|safe }});
+    console.log('Daily Averages:', {{ daily_averages|safe }});
+    console.log('WB Predictions:', {{ wb_predictions|default:'null'|safe }});
+    console.log('=== END DEBUG ===');
+
+    // ==================== WEIGHT / BMI PREDICTIONS ====================
+    (function(){
+        const wb = {{ wb_predictions|default:'null'|safe }};
+        if(!wb) return;
+        const ctx = document.getElementById('wbPredChart');
+        if(!ctx) return;
+
+        const labels = wb.dates || [];
+        const weightData = wb.weight || [];
+        const bmiData = wb.bmi || [];
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Weight (kg)',
+                        data: weightData,
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239,68,68,0.08)',
+                        yAxisID: 'y-weight',
+                        tension: 0.3
+                    },
+                    {
+                        label: 'BMI',
+                        data: bmiData,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59,130,246,0.08)',
+                        yAxisID: 'y-bmi',
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: true } },
+                scales: {
+                    'y-weight': { type: 'linear', position: 'left', beginAtZero: false },
+                    'y-bmi': { type: 'linear', position: 'right', beginAtZero: false }
+                }
+            }
+        });
+    })();
+</script>
+{% endblock %}

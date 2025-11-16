@@ -1,0 +1,54 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% trans "Sign in via Google" %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 flex items-center justify-center">
+  <div class="max-w-2xl w-full p-6">
+    <nav class="mb-6">
+      <a href="/" class="text-sm text-indigo-600 hover:underline">Back to HealthTracker</a>
+    </nav>
+
+    <div class="bg-white shadow-lg rounded-2xl overflow-hidden">
+      <div class="p-8 sm:p-12">
+        <div class="flex items-center gap-6">
+          <div class="w-16 h-16 flex items-center justify-center rounded-lg bg-white border">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="w-8 h-8">
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold text-slate-900">Sign In Via Google</h1>
+            <p class="mt-1 text-sm text-slate-500">You are about to sign in using a third-party account from Google.</p>
+          </div>
+        </div>
+
+        <div class="mt-8">
+          <form method="post" action="" class="space-y-4">
+            {% csrf_token %}
+            {% if next %}
+              <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+
+            <button type="submit" class="w-full flex items-center justify-center gap-3 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 px-4 py-3 text-sm font-medium text-slate-700">
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="w-5 h-5">
+              <span>Continue with Google</span>
+            </button>
+
+            <div class="text-center mt-4">
+              <a href="{% url 'signup' %}" class="text-sm text-slate-500 hover:underline">Cancel and sign in another way</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="bg-slate-50 p-4 sm:p-6 border-t">
+        <p class="text-xs text-slate-500 text-center">By continuing you agree to our <a href="#" class="text-indigo-600 hover:underline">Terms</a> and <a href="#" class="text-indigo-600 hover:underline">Privacy Policy</a>.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

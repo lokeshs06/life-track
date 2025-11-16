@@ -1,0 +1,68 @@
+{% load i18n %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% trans "Sign in via" %} {{ provider.name }}{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 flex items-center justify-center">
+  <div class="max-w-lg w-full p-6">
+    <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+      <div class="px-6 py-8 sm:px-10">
+        <div class="flex items-center gap-4">
+          <!-- Provider logo: Google -->
+          {% if provider.id == 'google' %}
+            <div class="flex-none w-14 h-14 rounded-lg bg-white border border-gray-200 flex items-center justify-center">
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="w-8 h-8">
+            </div>
+          {% else %}
+            <div class="flex-none w-14 h-14 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 font-semibold text-xl">{{ provider.name|slice:":1" }}</div>
+          {% endif %}
+          <div>
+            <h1 class="text-2xl font-bold text-slate-900">Continue with {{ provider.name }}</h1>
+            <p class="mt-1 text-sm text-slate-500">You are about to sign in using a third-party account from {{ provider.name }}. We'll only use your name and email to create your account.</p>
+          </div>
+        </div>
+
+        <div class="mt-6 border-t border-gray-100 pt-6">
+          <form method="post" action="" class="space-y-4">
+            {% csrf_token %}
+            {% if next %}
+              <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+
+            <button type="submit" class="w-full inline-flex items-center justify-center gap-3 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700">
+              <!-- friendly provider button style -->
+              {% if provider.id == 'google' %}
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="w-5 h-5">
+                <span>Continue with Google</span>
+              {% else %}
+                <span>Continue with {{ provider.name }}</span>
+              {% endif %}
+            </button>
+
+            <a href="{% url 'signup' %}" class="block text-center text-sm text-slate-500 hover:underline">Cancel and sign in with a different method</a>
+          </form>
+        </div>
+      </div>
+
+      <div class="bg-slate-50 px-6 py-4 sm:px-10 sm:py-6">
+        <div class="flex items-center justify-between text-sm text-slate-500">
+          <div>
+            <strong class="text-slate-700">HealthTracker</strong>
+            <span class="ml-2">— secure sign in</span>
+          </div>
+          <div>
+            <a href="/" class="text-indigo-600 hover:underline">Back to site</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="mt-6 text-center text-xs text-slate-400">By continuing you agree to our <a href="#" class="text-indigo-600 hover:underline">Terms</a> and <a href="#" class="text-indigo-600 hover:underline">Privacy Policy</a>.</p>
+  </div>
+</body>
+</html>

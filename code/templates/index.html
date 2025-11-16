@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeTrack</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    
+    <!-- Navigation -->
+    <nav class="bg-white/80 backdrop-blur-md shadow-lg fixed w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <i class="fas fa-heartbeat text-3xl text-indigo-600"></i>
+                    <span class="ml-2 text-2xl font-bold text-gray-800">LifeTrack</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="#features" class="text-gray-700 hover:text-indigo-600 font-medium transition">Features</a>
+                    <a href="#how-it-works" class="text-gray-700 hover:text-indigo-600 font-medium transition">How It Works</a>
+                    <a href="{% url 'login' %}" class="text-gray-700 hover:text-indigo-600 font-medium transition">Login</a>
+                    <a href="{% url 'signup' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition transform hover:scale-105">
+                        Get Started Free
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                
+                <!-- Left Content -->
+                <div>
+                    <div class="inline-block bg-indigo-100 text-indigo-700 px-4 py-2 rounded-full text-sm font-semibold mb-6">
+                        <i class="fas fa-sparkles mr-2"></i>AI-Powered Health Insights
+                    </div>
+                    <h1 class="text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
+                        Take Control of Your
+                        <span class="gradient-text">Health Journey</span>
+                    </h1>
+                    <p class="text-xl text-gray-600 mb-8">
+                        Track your nutrition, fitness, and wellness with intelligent AI recommendations. 
+                        Get personalized insights to achieve your health goals faster.
+                    </p>
+                    
+                    <!-- CTA Buttons -->
+                    <div class="flex flex-wrap gap-4 mb-12">
+                        <a href="{% url 'signup' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-lg font-semibold text-lg transition transform hover:scale-105 shadow-xl">
+                            <i class="fas fa-rocket mr-2"></i>Start Tracking Free
+                        </a>
+                        <a href="#how-it-works" class="bg-white hover:bg-gray-50 text-gray-800 px-8 py-4 rounded-lg font-semibold text-lg transition border-2 border-gray-200">
+                            <i class="fas fa-play-circle mr-2"></i>See How It Works
+                        </a>
+                    </div>
+                    
+                    <!-- Stats -->
+                    <div class="grid grid-cols-3 gap-8">
+                        <div>
+                            <div class="text-3xl font-bold text-indigo-600">10K+</div>
+                            <div class="text-gray-600">Active Users</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-indigo-600">500K+</div>
+                            <div class="text-gray-600">Logs Tracked</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-indigo-600">98%</div>
+                            <div class="text-gray-600">Satisfaction</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Content - Hero Image/Illustration -->
+                <div class="relative">
+                    <div class="float-animation">
+                        <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl shadow-2xl p-8 transform rotate-3">
+                            <div class="bg-white rounded-2xl p-6 transform -rotate-3">
+                                <!-- Mock Dashboard Preview -->
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center">
+                                            <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center">
+                                                <i class="fas fa-user text-indigo-600 text-xl"></i>
+                                            </div>
+                                            <div class="ml-3">
+                                                <div class="font-bold text-gray-900">Welcome back!</div>
+                                                <div class="text-sm text-gray-500">Your health dashboard</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Stats Cards -->
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div class="bg-orange-50 p-4 rounded-xl">
+                                            <div class="text-orange-600 text-2xl mb-1"><i class="fas fa-fire"></i></div>
+                                            <div class="text-2xl font-bold text-gray-900">2,450</div>
+                                            <div class="text-xs text-gray-600">Calories Today</div>
+                                        </div>
+                                        <div class="bg-green-50 p-4 rounded-xl">
+                                            <div class="text-green-600 text-2xl mb-1"><i class="fas fa-walking"></i></div>
+                                            <div class="text-2xl font-bold text-gray-900">8,542</div>
+                                            <div class="text-xs text-gray-600">Steps Today</div>
+                                        </div>
+                                        <div class="bg-blue-50 p-4 rounded-xl">
+                                            <div class="text-blue-600 text-2xl mb-1"><i class="fas fa-dumbbell"></i></div>
+                                            <div class="text-2xl font-bold text-gray-900">45 min</div>
+                                            <div class="text-xs text-gray-600">Exercise</div>
+                                        </div>
+                                        <div class="bg-purple-50 p-4 rounded-xl">
+                                            <div class="text-purple-600 text-2xl mb-1"><i class="fas fa-bed"></i></div>
+                                            <div class="text-2xl font-bold text-gray-900">7.5 hrs</div>
+                                            <div class="text-xs text-gray-600">Sleep</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- AI Recommendation Preview -->
+                                    <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded-r-xl">
+                                        <div class="flex items-start">
+                                            <i class="fas fa-robot text-indigo-600 text-xl mr-3 mt-1"></i>
+                                            <div>
+                                                <div class="font-semibold text-gray-900 text-sm">AI Insight</div>
+                                                <div class="text-xs text-gray-600 mt-1">Great progress! You're 85% toward your weekly goal...</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">Everything You Need to Stay Healthy</h2>
+                <p class="text-xl text-gray-600">Powerful features to track, analyze, and improve your health</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Feature 1 -->
+                <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-8 hover:shadow-xl transition transform hover:-translate-y-2">
+                    <div class="bg-orange-500 w-14 h-14 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-utensils text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Nutrition Tracking</h3>
+                    <p class="text-gray-600">Log calories, macros, and water intake. Get insights on your eating patterns and nutritional balance.</p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-8 hover:shadow-xl transition transform hover:-translate-y-2">
+                    <div class="bg-green-500 w-14 h-14 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-running text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Activity Monitoring</h3>
+                    <p class="text-gray-600">Track steps, workouts, and exercise duration. Stay motivated with daily activity goals.</p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-8 hover:shadow-xl transition transform hover:-translate-y-2">
+                    <div class="bg-purple-500 w-14 h-14 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-bed text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Sleep Analysis</h3>
+                    <p class="text-gray-600">Monitor sleep hours and quality. Improve your rest with personalized sleep recommendations.</p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-8 hover:shadow-xl transition transform hover:-translate-y-2">
+                    <div class="bg-blue-500 w-14 h-14 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-robot text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">AI Recommendations</h3>
+                    <p class="text-gray-600">Get intelligent, personalized health insights based on your data and patterns.</p>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="bg-gradient-to-br from-red-50 to-red-100 rounded-2xl p-8 hover:shadow-xl transition transform hover:-translate-y-2">
+                    <div class="bg-red-500 w-14 h-14 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-chart-line text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Progress Visualization</h3>
+                    <p class="text-gray-600">Beautiful charts and graphs showing your health trends over time.</p>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl p-8 hover:shadow-xl transition transform hover:-translate-y-2">
+                    <div class="bg-indigo-500 w-14 h-14 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-bullseye text-white text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Goal Setting</h3>
+                    <p class="text-gray-600">Set custom health goals and track your progress with visual indicators.</p>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-20 bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">How It Works</h2>
+                <p class="text-xl text-indigo-100">Get started in 3 simple steps</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <!-- Step 1 -->
+                <div class="text-center">
+                    <div class="bg-white/20 backdrop-blur-sm w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-4xl font-bold">1</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Create Your Profile</h3>
+                    <p class="text-indigo-100">Sign up and tell us about yourself - age, height, weight, and activity level.</p>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="text-center">
+                    <div class="bg-white/20 backdrop-blur-sm w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-4xl font-bold">2</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Track Daily Data</h3>
+                    <p class="text-indigo-100">Log your meals, activities, sleep, and vitals in just a few minutes each day.</p>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="text-center">
+                    <div class="bg-white/20 backdrop-blur-sm w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-4xl font-bold">3</span>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Get AI Insights</h3>
+                    <p class="text-indigo-100">Receive personalized recommendations and watch your progress with beautiful visualizations.</p>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h2 class="text-4xl font-bold text-gray-900 mb-6">Ready to Transform Your Health?</h2>
+            <p class="text-xl text-gray-600 mb-8">Join thousands of users already tracking their way to better health</p>
+            <a href="{% url 'signup' %}" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-12 py-4 rounded-lg font-bold text-lg transition transform hover:scale-105 shadow-xl">
+                <i class="fas fa-rocket mr-2"></i>Start Your Free Journey Today
+            </a>
+            <p class="text-gray-500 mt-4 text-sm">No credit card required • Free forever</p>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-heartbeat text-3xl text-indigo-400"></i>
+                        <span class="ml-2 text-xl font-bold">LifeTrack</span>
+                    </div>
+                    <p class="text-gray-400">Your personal AI-powered health companion.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Product</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#features" class="hover:text-white transition">Features</a></li>
+                        <li><a href="#how-it-works" class="hover:text-white transition">How It Works</a></li>
+                        <li><a href="{% url 'signup' %}" class="hover:text-white transition">Sign Up</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Company</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition">About Us</a></li>
+                        <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-white transition">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-twitter text-2xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-facebook text-2xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-instagram text-2xl"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 LifeTrack. All rights reserved. Made with ❤️ for your health.</p>
+            </div>
+        </div>
+    </footer>
+    
+</body>
+</html>
